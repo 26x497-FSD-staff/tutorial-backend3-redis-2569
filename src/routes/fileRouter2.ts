@@ -68,10 +68,8 @@ router.get(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // add async delay
-      // await delay(1000);
-      console.log('inside: /view/:filename');
+      await delay(1000);
       const filename = req.params.filename as string;
-      console.log(filename);
 
       // Fetch object metadata to get the original content type
       const stat = await minioClient.statObject(BUCKET_NAME, filename);
