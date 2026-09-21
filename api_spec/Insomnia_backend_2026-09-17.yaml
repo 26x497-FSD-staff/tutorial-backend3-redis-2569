@@ -1,0 +1,456 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: backend-lab
+meta:
+  id: wrk_8efe965215d04215b2abb2f7a4c88954
+  created: 1785147652993
+  modified: 1789438182773
+  description: ""
+collection:
+  - url: "{{ _.todo }}/todo"
+    name: /todo
+    meta:
+      id: req_6fc878e79c0342c3a2967cffc1b8502c
+      created: 1785285681020
+      modified: 1789619840829
+      isPrivate: false
+      description: ""
+      sortKey: -1785285681020
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/todo"
+    name: /todo
+    meta:
+      id: req_a0a06b57581d44078c2202f7513637a9
+      created: 1785285697465
+      modified: 1785286263757
+      isPrivate: false
+      description: ""
+      sortKey: -1785285697465
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"todoText": "Todo item - {% faker 'randomProductName' %}"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/todo"
+    name: /todo
+    meta:
+      id: req_11d5c1a8881c4f50bf581d8fc5991175
+      created: 1785285707800
+      modified: 1789619569733
+      isPrivate: false
+      description: ""
+      sortKey: -1785285707800
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"id": "742f2b64-1aaa-4b36-acba-f31ebafb49c5"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/todo/task"
+    name: /todo/task
+    meta:
+      id: req_7ab1792fd21c453fb5346253bcf48023
+      created: 1785285716249
+      modified: 1789646321940
+      isPrivate: false
+      description: ""
+      sortKey: -1785285716249
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"todoId": "4a2e432a-eedb-4123-a3d4-5177e92a2a79",
+        	"taskText": "Sub Task - {% faker 'randomJobArea' %}"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/todo/reset"
+    name: /todo/reset
+    meta:
+      id: req_987ef8da10444ca9a5858e6d9bc36535
+      created: 1785285737546
+      modified: 1785286237789
+      isPrivate: false
+      description: ""
+      sortKey: -1785285712024.5
+    method: POST
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/user"
+    name: /user
+    meta:
+      id: req_32054f7ebc7b441c88d4270b8a4f29dd
+      created: 1785285752405
+      modified: 1789641814330
+      isPrivate: false
+      description: ""
+      sortKey: -1785285752405
+    method: GET
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/user"
+    name: /user
+    meta:
+      id: req_c9cbb7e848c04591b59b23248f2e16de
+      created: 1785285765216
+      modified: 1789641786909
+      isPrivate: false
+      description: ""
+      sortKey: -1785285765216
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "{% faker 'randomEmail' %}",
+        	"displayName": "{% faker 'randomUserName' %}",
+        	"metadata": {
+        		"name": "{% faker 'randomFullName' %}",
+        		"role": "Member",
+        		"isActive": {% faker 'randomBoolean' %},
+        		"address" : {
+        			"city": "{% faker 'randomCity' %}",
+        			"street": "{% faker 'randomStreetAddress' %}"
+        		}
+        	}
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/user/reset"
+    name: /user/reset
+    meta:
+      id: req_e0c3e6e9844c4e6cad5d989147052f9a
+      created: 1785285782076
+      modified: 1785287147217
+      isPrivate: false
+      description: ""
+      sortKey: -1785285782076
+    method: POST
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/file/upload"
+    name: /file/upload
+    meta:
+      id: req_b34337a736d54808bb32464733d9fcdb
+      created: 1785294121124
+      modified: 1789652419285
+      isPrivate: false
+      description: ""
+      sortKey: -1785294121124
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - name: file
+          value: ""
+          description: ""
+          disabled: false
+          fileName: D:\Documents\courseload-2568-1-signed.pdf
+          type: file
+        - name: itemId
+          value: f678759e-fee3-4756-ade1-b6160f1048cb
+          description: ""
+          disabled: false
+          multiline: false
+          type: text
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/file"
+    name: /file
+    meta:
+      id: req_4ace540f7d7d4229ab198dd08834972c
+      created: 1785295830250
+      modified: 1785295849812
+      isPrivate: false
+      description: ""
+      sortKey: -1785295830250
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/file/reset"
+    name: /file/reset
+    meta:
+      id: req_abd9ba34438844e48248e3c389285154
+      created: 1785296375397
+      modified: 1785296394936
+      isPrivate: false
+      description: ""
+      sortKey: -1785296375397
+    method: POST
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/v2/file/upload"
+    name: /v2/file/upload
+    meta:
+      id: req_83b47fd6254442c381274e8042de4a1d
+      created: 1785308715726
+      modified: 1789654758520
+      isPrivate: false
+      description: ""
+      sortKey: -1785308715726
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - name: file
+          value: ""
+          description: ""
+          disabled: false
+          fileName: C:\Users\dpotikan\Pictures\Screenshots\Screenshot 2025-06-19
+            223549.png
+          type: file
+        - name: itemId
+          value: 69453bee-ff39-4ade-9f35-d388aa52195d
+          description: ""
+          disabled: false
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo
+      }}/v2/file/view/69453bee-ff39-4ade-9f35-d388aa52195d%2Fscreenshot_2025-06\
+      -19_223549-1789654758878-jew0e86.png"
+    name: /v2/file/view/:filename
+    meta:
+      id: req_cf3398a16be740ed8a3ec2ff4ddd7d89
+      created: 1785308794497
+      modified: 1789655153332
+      isPrivate: false
+      description: ""
+      sortKey: -1785308735418.75
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/v2/file"
+    name: /v2/file
+    meta:
+      id: req_018cff57585a4e3e9afa465ff5139eaf
+      created: 1785308899528
+      modified: 1789655543562
+      isPrivate: false
+      description: ""
+      sortKey: -1785308755111.5
+    method: GET
+    parameters:
+      - name: prefix
+        value: f678759e-fee3-4756-ade1-b6160f1048cb
+        description: ""
+        disabled: true
+      - name: suffix
+        value: png
+        description: ""
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/v2/file/"
+    name: /v2/file/:filename
+    meta:
+      id: req_4c4281e6b14648e7846a25fe9d7203ba
+      created: 1785316701285
+      modified: 1785318122074
+      isPrivate: false
+      description: ""
+      sortKey: -1785316701285
+    method: DELETE
+    parameters:
+      - name: filename
+        value: ce0d2266-ff88-4fe3-8fa5-1a382e3342bd/screenshot_2025-06-27_094757-1785315692820-9wrwbk9.png
+        description: ""
+        disabled: true
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo
+      }}/v2/file/folder/f678759e-fee3-4756-ade1-b6160f1048cb/screenshot_2025-06\
+      -19_223549-1789654703865-et0fggt.png"
+    name: /v2/file/folder/*filePath
+    meta:
+      id: req_d9484de740b64c77af84e9c667224316
+      created: 1785318061827
+      modified: 1789655993179
+      isPrivate: false
+      description: ""
+      sortKey: -1785312728198.25
+    method: DELETE
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/file/view/file-1789651046517-774938771.png"
+    name: /file/view/:filename
+    meta:
+      id: req_204c79bc419b4613abced52beedc9ac5
+      created: 1789650797936
+      modified: 1789651673466
+      isPrivate: false
+      description: ""
+      sortKey: -1785294975687
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.todo }}/file/file-1789650620739-137088479.png"
+    name: /file/:filename
+    meta:
+      id: req_8ba93a4331d0403282906fe52efdad8d
+      created: 1789651691353
+      modified: 1789652460366
+      isPrivate: false
+      description: ""
+      sortKey: -1785296102823.5
+    method: DELETE
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_01eace6c657beb7158631d18ade0dcaae1869bde
+    created: 1785255645457
+    modified: 1785255645457
+environments:
+  name: Base Environment
+  meta:
+    id: env_01eace6c657beb7158631d18ade0dcaae1869bde
+    created: 1785147652995
+    modified: 1789619833932
+    isPrivate: false
+  data:
+    todo: http://localhost:3000
