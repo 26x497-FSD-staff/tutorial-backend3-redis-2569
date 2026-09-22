@@ -18,6 +18,11 @@ import { dbClient } from "@db/client.js";
 import { fileTable } from "@db/schema.js";
 import { eq } from "drizzle-orm";
 
+import cacheMiddleware from "../middlewares/cacheMiddleware.ts"
+
+import redisClient from "../../db/redisClient.ts";
+
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 import dotenv from "dotenv";
@@ -68,7 +73,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // add async delay
-      await delay(1000);
+      // await delay(1000);
       const filename = req.params.filename as string;
 
       // Fetch object metadata to get the original content type
@@ -88,9 +93,118 @@ router.get(
   },
 );
 
+import { Readable } from 'stream'
+
+// GET /v2/file/view2/:filename - Endpoint to access file (Streams object safely from storage)
+router.get(
+  "/view2/:filename",
+  async (req: Request, res: Response, next: NextFunction) => {
+    // add async delay
+    const filename = req.params.filename as string;
+    const key = `minio:v2:stat:${filename}`;
+
+    try {
+      // 1. Check Redis for the cached file buffer (stored as base64 string)
+      const cachedFileBase64 = await redisClient.get(key);
+
+      if (cachedFileBase64) {
+        console.log('⚡Cache HIT : Serving from Redis');
+        
+        const fileBuffer = Buffer.from(cachedFileBase64, 'base64');
+        
+        // Optional: Set appropriate headers if you cache content-type elsewhere
+        const contentType = await redisClient.get(`${key}:Content-Type`) as string
+        res.setHeader('Content-Type', contentType);
+        
+        // Turn the buffer back into a stream and pipe it to the response
+        return Readable.from(fileBuffer).pipe(res);
+      }
+      console.log(`❌ Cache MISS. Fetching from minio-server`);
+
+      // 2. Fallback to MinIO if cache misses (Cache Miss)
+      const stat = await minioClient.statObject(BUCKET_NAME, filename);
+      res.setHeader("Content-Type", stat.metaData["content-type"]);
+
+      // Stream the image file directly to the client response
+      const dataStream = await minioClient.getObject(BUCKET_NAME, filename);
+
+      // 3. Read the incoming stream into a collection of chunks (Buffer)
+      const chunks: Buffer[] = [];
+      
+      dataStream.on('data', (chunk) => {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        res.write(chunk); // Pipe to client immediately so the user doesn't wait
+      });
+
+      dataStream.on('end', async () => {
+        res.end(); // Finish the client response
+
+        // 4. Combine chunks and save to Redis in the background
+        const completeBuffer = Buffer.concat(chunks);
+        const base64String = completeBuffer.toString('base64');
+        
+        // Store in Redis (expires in 1 hour / 3600 seconds)
+        await redisClient.setEx(key, 30, base64String);
+        await redisClient.setEx(`${key}:Content-Type`, 30, stat.metaData["content-type"]);
+      });
+
+      dataStream.pipe(res);
+
+    } catch (error: any) {
+      if (error.code === "NoSuchKey") {
+        res.status(404).json({ error: "File not found." });
+        return;
+      }
+      next(error);
+    }
+  },
+);
+
+// Endpoint to get object metadata/stats with Redis caching
+router.get('/view3/:filename', async (req: Request, res: Response, next: NextFunction) => {
+  // add async delay
+    const filename = req.params.filename as string;
+    const key = `miniov3:stat:${filename}`;
+
+  try {
+    // 1. Check Redis cache first (Cache Hit)
+    const cachedData = await redisClient.get(key);
+    if (cachedData) {
+      console.log('⚡Cache HIT : Serving from Redis');
+      return res.status(200).json({
+        source: 'redis-cache',
+        data: JSON.parse(cachedData),
+      });
+    }
+    console.log(`❌ Cache MISS. Fetching from minio-server`);
+
+    // 2. Fallback to MinIO if cache misses (Cache Miss)
+    const stat = await minioClient.statObject(BUCKET_NAME, filename);
+    
+    // Generate a presigned URL valid for 1 hour
+    const presignedUrl = await minioClient.presignedGetObject(BUCKET_NAME, filename, 3600);
+
+    const result = {
+      stat,
+      presignedUrl,
+    };
+
+    // 3. Store the result in Redis with an expiration time (e.g., 300 seconds / 5 minutes)
+    await redisClient.setEx(key, 30, JSON.stringify(result));
+
+    return res.status(200).json({
+      source: 'minio-server',
+      data: result,
+    });
+  } catch (error: any) {
+    console.error('Error processing request:', error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+
 
 // GET /v2/file?prefix=xxx&suffix=yyy - Endpoint to list files
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/", cacheMiddleware('file',30), async (req: Request, res: Response, next: NextFunction) => {
   try {
     // add async delay
     await delay(1500);
