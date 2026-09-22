@@ -31,6 +31,7 @@ Previously from the [File Storage Tutorial], there are a few API endpoints that 
 
 - `GET /todo`
 - `GET /user`
+- `GET /v2/file`
 
 In those endpoints, we have mocked the delay by using the `delay()` function. In order to lower the reponse time, we can add `cache` component to our API service.
 
@@ -187,5 +188,14 @@ router.get("/", cacheMiddleware('user',15), async (req, res, next) => {
   ...
 });
 ```
+
+As for the `GET /v2/file` endpoint, we modify the file `src/routes/fileRouter_v2.ts`.
+
+```typescript
+// GET /v2/file?prefix=xxx&suffix=yyy - Endpoint to list files
+router.get("/", cacheMiddleware('file',30), async (req: Request, res: Response, next: NextFunction) => {
+  ...
+});
+````
 
 Now we can get better `response time` on both endpoints when making the same request within `15` seconds.
