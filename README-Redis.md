@@ -196,6 +196,52 @@ As for the `GET /v2/file` endpoint, we modify the file `src/routes/fileRouter_v2
 router.get("/", cacheMiddleware('file',30), async (req: Request, res: Response, next: NextFunction) => {
   ...
 });
-````
+```
+
+We can also modify the `GET /v2/file/view2/:filename` to add redis-cache within the endpoint logic 
+
+```typescript
+// GET /v2/file/view2/:filename - with redis-cache for presignedURL
+router.get('/view2/:filename', async (req: Request, res: Response, next: NextFunction) => {
+  // add async delay
+    const filename = req.params.filename as string;
+    const key = `minio:v2:stat:${filename}`;
+
+  try {
+    // 1. Check Redis cache first (Cache Hit)
+    const cachedData = await redisClient.get(key);
+    if (cachedData) {
+      console.log('⚡Cache HIT : Serving from Redis');
+      return res.status(200).json({
+        source: 'redis-cache',
+        data: JSON.parse(cachedData),
+      });
+    }
+    console.log(`❌ Cache MISS. Fetching from minio-server`);
+
+    // 2. Fallback to MinIO if cache misses (Cache Miss)
+    const stat = await minioClient.statObject(BUCKET_NAME, filename);
+    
+    // Generate a presigned URL valid for 1 hour
+    const presignedUrl = await minioClient.presignedGetObject(BUCKET_NAME, filename, 3600);
+
+    const result = {
+      stat,
+      presignedUrl,
+    };
+
+    // 3. Store the result in Redis with an expiration time (e.g., 300 seconds / 5 minutes)
+    await redisClient.setEx(key, 30, JSON.stringify(result));
+
+    return res.status(200).json({
+      source: 'minio-server',
+      data: result,
+    });
+  } catch (error: any) {
+    console.error('Error processing request:', error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+```
 
 Now we can get better `response time` on both endpoints when making the same request within `15` seconds.
