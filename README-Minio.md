@@ -880,6 +880,38 @@ router.get(
 
 Now we should be able to view the uploaded file using `viewUrl`.
 
+Instead of using this endpoint which does not have access `time limit`, we can ask `minio` to create `presignedURL` with `time limit` and return the URL as response.
+
+```typescript
+// GET /v2/file/view2/:filename - reponse with presignedURL
+router.get('/view2/:filename', async (req: Request, res: Response, next: NextFunction) => {
+  // add async delay
+    const filename = req.params.filename as string;
+
+  try {
+    const stat = await minioClient.statObject(BUCKET_NAME, filename);
+    
+    // Generate a presigned URL valid for 1 hour
+    const presignedUrl = await minioClient.presignedGetObject(BUCKET_NAME, filename, 3600);
+
+    const result = {
+      stat,
+      presignedUrl,
+    };
+
+    return res.status(200).json({
+      source: 'minio-server',
+      data: result,
+    });
+
+  } catch (error: any) {
+    console.error('Error processing request:', error);
+
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+```
+
 ### 3. `GET /v2/file/` endpoint
 
 This endpoint return a list of uploaded files identified by query parameters `prefix` and `suffix`.
