@@ -80,6 +80,12 @@ OK
 
 ## Create Redis client
 
+First we need to install `redis` package.
+
+```bash
+pnpm install redis
+```
+
 Next step is to create a `Redis client` object that we can use to `SET` and `GET` data from our API. Create the file `db/redisClient.ts` with the following code.
 
 ```typescript
