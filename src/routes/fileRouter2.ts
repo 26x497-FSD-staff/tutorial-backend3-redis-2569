@@ -95,13 +95,13 @@ router.get(
 
 import { Readable } from 'stream'
 
-// GET /v2/file/view2/:filename - Endpoint to access file (Streams object safely from storage)
+// GET /v2/file/view3/:filename - with redis-cache for datastream
 router.get(
-  "/view2/:filename",
+  "/view3/:filename",
   async (req: Request, res: Response, next: NextFunction) => {
     // add async delay
     const filename = req.params.filename as string;
-    const key = `minio:v2:stat:${filename}`;
+    const key = `minio:v3:stat:${filename}`;
 
     try {
       // 1. Check Redis for the cached file buffer (stored as base64 string)
@@ -160,11 +160,11 @@ router.get(
   },
 );
 
-// Endpoint to get object metadata/stats with Redis caching
-router.get('/view3/:filename', async (req: Request, res: Response, next: NextFunction) => {
+// GET /v2/file/view2/:filename - with redis-cache for presignedURL
+router.get('/view2/:filename', async (req: Request, res: Response, next: NextFunction) => {
   // add async delay
     const filename = req.params.filename as string;
-    const key = `miniov3:stat:${filename}`;
+    const key = `minio:v2:stat:${filename}`;
 
   try {
     // 1. Check Redis cache first (Cache Hit)
